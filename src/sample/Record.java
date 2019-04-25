@@ -10,6 +10,7 @@ public class Record {
         Email = email;
     }
 
+
     @Override
     public String toString() {
         return StuNum + '|' + Name + '|' + Phone + '|' + Email + '|' + '\n';

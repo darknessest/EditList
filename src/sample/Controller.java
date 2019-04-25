@@ -10,14 +10,21 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+//TODO add edit/save button in record window
+//TODO moving from one record to another
+//TODO test database file
+//TODO add different messages to statuslabel
+//TODO proper opening and closing sequences
 
 public class Controller implements Initializable {
 
@@ -29,7 +36,7 @@ public class Controller implements Initializable {
     //************************************
     //***           VARIABLES          ***
     //************************************
-    private Record AllRecords[];
+    List<Record> AllRecords = new ArrayList<Record>();
     private long currentRecordNum;
     @FXML
     AnchorPane RecordInfoPane;
@@ -53,7 +60,11 @@ public class Controller implements Initializable {
                 new FileChooser.ExtensionFilter("Text Files", "*.txt")
                 , new FileChooser.ExtensionFilter("Database Files", "*.rdb"));
         if (file != null) {
-            openDatabase(file);
+            try {
+                openDatabase(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -86,16 +97,34 @@ public class Controller implements Initializable {
     //************************************
     //***       SERVING METHODS        ***
     //************************************
-    private void openDatabase(File file) {
+    private void openDatabase(File file) throws FileNotFoundException {
         System.out.println("hello " + file.getName());
-        int i = 1;
 
+        String tempStuNum = "", tempName = "", tempPhone = "", tempEmail = "";
+        Scanner filescanner = new Scanner(file);
+        //saving database info into AllRecords ArrayList
+        while (filescanner.hasNextLine()) {
+            String str = filescanner.nextLine();
+            Scanner linescanner = new Scanner(str);
+            linescanner.useDelimiter("[|]");
+            while (linescanner.hasNext()) {
+                tempStuNum = linescanner.next();
+                tempName = linescanner.next();
+                tempPhone = linescanner.next();
+                tempEmail = linescanner.next();
+            }
+            AllRecords.add(new Record(tempStuNum, tempName, tempPhone, tempEmail));
+            linescanner.close();
+        }
+        filescanner.close();
+
+        int i = 1;
         for (Record x : AllRecords)
             RecordsList.getItems().add(i++ + ") " + x.getStuNum());
     }
 
 
-    private void saveToFile(Record[] content, File file) {
+    private void saveToFile(List<Record> content, File file) {
         try {
             PrintWriter writer;
             writer = new PrintWriter(file);
@@ -108,10 +137,13 @@ public class Controller implements Initializable {
     }
 
     private void addNewRecord() {
-
+        AllRecords.add(new Record(StuNumfield.getText(), NameField.getText(), PhoneField.getText(), EmailField.getText()));
     }
 
-    private void loadUpRecord() {
-
+    private void previewRecord(Record one) {
+        StuNumfield.setText(one.getStuNum());
+        NameField.setText(one.getName());
+        PhoneField.setText(one.getPhone());
+        EmailField.setText(one.getEmail());
     }
 }
