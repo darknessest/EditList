@@ -10,6 +10,12 @@ public class Record {
         Email = email;
     }
 
+    public Record() {
+        StuNum = "";
+        Name = "";
+        Phone = "";
+        Email = "";
+    }
 
     @Override
     public String toString() {

@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -31,19 +32,23 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         RecordInfoPane.setDisable(true);
+        RecordButtonsBox.setDisable(true);
+        RecordButtonsBox.setVisible(false);
     }
 
     //************************************
     //***           VARIABLES          ***
     //************************************
-    List<Record> AllRecords = new ArrayList<Record>();
+    private List<Record> AllRecords = new ArrayList<Record>();
     private long currentRecordNum;
     @FXML
     AnchorPane RecordInfoPane;
     @FXML
-    ListView RecordsList;
+    HBox RecordButtonsBox;
     @FXML
-    TextField StuNumfield, NameField, PhoneField, EmailField;
+    ListView<String> RecordsList;
+    @FXML
+    TextField StuNumField, NameField, PhoneField, EmailField;
     @FXML
     Button AddNewRecordButton, NextRecordButton, PrevRecordButton;
     @FXML
@@ -71,6 +76,8 @@ public class Controller implements Initializable {
     @FXML
     public void CreateNewFile() {
         RecordInfoPane.setDisable(false);
+        RecordButtonsBox.setDisable(false);
+        RecordButtonsBox.setVisible(true);
 
     }
 
@@ -92,6 +99,12 @@ public class Controller implements Initializable {
             saveToFile(AllRecords, file);
         }
 
+    }
+
+    @FXML
+    public void chooseItemInList() {
+        System.out.println(RecordsList.getSelectionModel().getSelectedIndex());
+        previewRecord(AllRecords.get(RecordsList.getSelectionModel().getSelectedIndex()));
     }
 
     //************************************
@@ -137,11 +150,13 @@ public class Controller implements Initializable {
     }
 
     private void addNewRecord() {
-        AllRecords.add(new Record(StuNumfield.getText(), NameField.getText(), PhoneField.getText(), EmailField.getText()));
+        AllRecords.add(new Record(StuNumField.getText(), NameField.getText(), PhoneField.getText(), EmailField.getText()));
     }
 
     private void previewRecord(Record one) {
-        StuNumfield.setText(one.getStuNum());
+        RecordInfoPane.setDisable(false);
+
+        StuNumField.setText(one.getStuNum());
         NameField.setText(one.getName());
         PhoneField.setText(one.getPhone());
         EmailField.setText(one.getEmail());
