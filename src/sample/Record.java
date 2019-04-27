@@ -17,6 +17,15 @@ public class Record {
         Email = "";
     }
 
+    public void setValues(String stuNum, String name, String phone, String email) {
+        StuNum = stuNum;
+        Name = name;
+        Phone = phone;
+        Email = email;
+    }
+
+
+
     @Override
     public String toString() {
         return StuNum + '|' + Name + '|' + Phone + '|' + Email + '|' + '\n';
